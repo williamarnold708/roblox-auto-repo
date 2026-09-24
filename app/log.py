@@ -11,9 +11,9 @@ _SECRET = re.compile(r"(access_token|refresh_token|client_secret|Authorization)(
 
 class RedactFilter(logging.Filter):
     def filter(self, record: logging.LogRecord) -> bool:
-        record.msg = _SECRET.sub(r"\1\2\3***", str(record.msg))
-        if record.args:
-            record.args = tuple(_SECRET.sub(r"\1\2\3***", str(a)) for a in record.args)
+        # Format first so tokens passed as %-args are redacted too.
+        record.msg = _SECRET.sub(r"\1\2\3***", record.getMessage())
+        record.args = None
         return True
 
 

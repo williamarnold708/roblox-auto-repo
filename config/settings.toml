@@ -41,3 +41,11 @@ timezone = "Europe/London"
 
 [publish]
 mode = "local"            # local | inbox | direct
+app_audited = false       # set true ONLY after TikTok approves your app audit (needed for public direct posts)
+privacy_level = ""        # your explicit choice; must be one creator_info offers. No default.
+is_aigc = false           # AI-generated content label
+brand_content_toggle = false
+brand_organic_toggle = true   # you are promoting your own game
+redirect_port = 8765
+chunk_size_mb = 10
+pkce_encoding = "hex"
