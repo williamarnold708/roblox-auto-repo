@@ -132,6 +132,15 @@ def _heartbeat_ok(settings, conn, interval: int) -> bool:
     return True
 
 
+def _reload(settings):
+    """Re-read settings.toml so edits apply on the next pass; keep the old ones if it is broken."""
+    try:
+        return config.load(settings.root)
+    except Exception as e:  # noqa: BLE001
+        log.warning("settings.toml unreadable, keeping previous settings: %s", e)
+        return settings
+
+
 def cmd_service(settings, args) -> int:
     interval = int(args.interval or _ops(settings).get("poll_seconds", 60))
     conn = open_db(settings)
@@ -165,6 +174,7 @@ def cmd_service(settings, args) -> int:
         else:
             halted_logged = False
             try:
+                settings = _reload(settings)
                 out = run_pass(settings, conn)
                 log.info("pass: %s", _fmt_pass(out))
             except Exception as e:  # noqa: BLE001 - the service must survive anything

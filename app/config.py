@@ -31,5 +31,5 @@ def load(root: Path | None = None) -> Settings:
     cfg = root / "config" / "settings.toml"
     if not cfg.exists():  # fall back to the packaged defaults (e.g. temp roots in tests)
         cfg = ROOT / "config" / "settings.toml"
-    with open(cfg, "rb") as f:
-        return Settings(root=root, raw=tomllib.load(f))
+    # utf-8-sig: tolerate the BOM Notepad/PowerShell may add when the file is edited
+    return Settings(root=root, raw=tomllib.loads(cfg.read_text(encoding="utf-8-sig")))

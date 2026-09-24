@@ -48,6 +48,24 @@ def autostart(settings, enable: bool) -> Path:
     return target
 
 
+def _stop_running_service(settings) -> None:
+    """Stop a service started earlier (e.g. by a previous setup) so the new one uses current code."""
+    from datetime import datetime, timedelta, timezone
+    from . import db
+    conn = db.connect(settings.path("database"))
+    pid, beat = db.get_state(conn, "service_pid"), db.get_state(conn, "service_heartbeat")
+    conn.close()
+    if not pid or not beat:
+        return
+    try:  # only if its heartbeat is recent, so a recycled pid is never touched
+        if datetime.now(timezone.utc) - datetime.fromisoformat(beat) > timedelta(minutes=10):
+            return
+        os.kill(int(pid), 15)
+        print(f"Stopped the previous service (pid {pid}).")
+    except (OSError, ValueError):
+        pass
+
+
 def _slug(s: str) -> str:
     return re.sub(r"[^a-z0-9]+", "-", s.lower()).strip("-") or "my-game"
 
@@ -55,6 +73,16 @@ def _slug(s: str) -> str:
 def _ask(prompt: str, default: str = "") -> str:
     ans = input(f"{prompt}{f' [{default}]' if default else ''}: ").strip().strip('"')
     return ans or default
+
+
+def _ask_cta(name: str) -> str:
+    default = f"Play {name} on Roblox - link in bio"
+    while True:
+        cta = _ask("Call to action", default)
+        if "<" in cta or ">" in cta:
+            print("  That still contains a <placeholder>; type the real text or press Enter.")
+            continue
+        return cta
 
 
 def _set_inbox(settings, inbox: Path) -> None:
@@ -105,11 +133,20 @@ def run(settings, args) -> int:
 
     print("=== 4/5 Where will recordings arrive?")
     print("Phone recordings: upload to a Google Drive / OneDrive / Dropbox folder that syncs to this PC.")
-    synced = _ask("Synced folder path (Enter = use the project's inbox folder)")
-    if synced:
+    while True:
+        synced = _ask("Synced folder path, e.g. C:\\Users\\you\\Google Drive\\AutoPromo "
+                      "(Enter = use the project's inbox folder)")
+        if not synced:
+            _set_inbox(settings, Path("inbox"))
+            break
         inbox = Path(synced).expanduser()
+        if not inbox.is_absolute():
+            print("  Please paste the full folder path (starting with a drive letter like C:\\), "
+                  "or press Enter.")
+            continue
         inbox.mkdir(parents=True, exist_ok=True)
         _set_inbox(settings, inbox)
+        break
     inbox = settings.path("inbox")
     print("Inbox:", inbox)
 
@@ -125,7 +162,7 @@ def run(settings, args) -> int:
                        "description": _ask("One-sentence description"),
                        "genre": _ask("Genre (obby, tycoon, simulator, horror...)"),
                        "audience": _ask("Target audience", "8-14"),
-                       "cta": _ask("Call to action", f"Play {name} on Roblox - link in bio"),
+                       "cta": _ask_cta(name),
                        "avoid": _ask("Words to never use, comma-separated")}
             print("Wrote", write_game_json(game_dir, answers))
         print(f"Put recordings for this game in: {game_dir}")
@@ -133,9 +170,10 @@ def run(settings, args) -> int:
     print("=== 5/5 Auto-start")
     if os.name == "nt" and not args.skip_autostart:
         autostart(settings, True)
-        subprocess.Popen([_pythonw(), "-m", "app", "service"], cwd=settings.root,
+        _stop_running_service(settings)
+        subprocess.Popen([_pythonw(), "-m", "app", "service", "--force"], cwd=settings.root,
                          creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0))
-        print("Service started in the background.")
+        print("Service (re)started in the background.")
     else:
         print("Skipped (run `python -m app autostart on` on Windows).")
 

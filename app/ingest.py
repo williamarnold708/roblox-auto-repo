@@ -51,7 +51,7 @@ def _load_game_json(folder: Path) -> dict:
         _log.warning("no game.json in %s; using folder name as game name", folder)
         return {"name": folder.name}
     try:
-        data = json.loads(gj.read_text(encoding="utf-8"))
+        data = json.loads(gj.read_text(encoding="utf-8-sig"))
         if not isinstance(data, dict):
             raise ValueError("game.json must be an object")
         return data
@@ -81,7 +81,7 @@ def upsert_game(conn: sqlite3.Connection, slug: str, meta: dict) -> int:
 def load_events(path: Path, duration: float | None = None) -> list[dict]:
     """Parse a logger .events.json; silently drops malformed entries."""
     try:
-        data = json.loads(path.read_text(encoding="utf-8"))
+        data = json.loads(path.read_text(encoding="utf-8-sig"))
     except (ValueError, OSError) as e:
         _log.warning("unreadable events file %s: %s", path, e)
         return []
