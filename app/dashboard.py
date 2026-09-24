@@ -147,7 +147,7 @@ def main() -> None:
             show = withm[["post", "game", "hook", "views", "likes", "comments", "shares",
                           "avg_watch_s", "completion_rate", "source", "captured_at"]]
             st.dataframe(show.sort_values("views", ascending=False).astype(object).where(show.notna(), UNAVAILABLE),
-                         hide_index=True, use_container_width=True)
+                         hide_index=True)
             g1, g2 = st.columns(2)
             with g1:
                 st.subheader("Best games (views per post)")
@@ -172,7 +172,7 @@ def main() -> None:
             st.info("No posts yet.")
         else:
             st.dataframe(posts[["post", "status", "mode", "scheduled_for", "game", "caption", "share_url"]]
-                         .sort_values("scheduled_for", ascending=False), hide_index=True, use_container_width=True)
+                         .sort_values("scheduled_for", ascending=False), hide_index=True)
         st.subheader("Preview")
         waiting = _df(conn, """
             SELECT r.id AS render, r.status, r.path, rec.thumbnail, g.name AS game, p.id AS post, p.status AS post_status

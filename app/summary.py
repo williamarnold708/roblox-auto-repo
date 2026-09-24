@@ -60,7 +60,7 @@ def action_items(settings, conn: sqlite3.Connection) -> list[str]:
         WHERE p.status='ready_manual' ORDER BY p.scheduled_for, p.id""").fetchall()
     if ready:
         lst = ", ".join(f"#{r['id']} ({Path(r['path'] or '').name})" for r in ready[:10])
-        items.append(f"{len(ready)} video(s) ready to post manually from `published/`: {lst}"
+        items.append(f"{len(ready)} video(s) ready to post manually from `queue/ready/` (MP4 + caption .txt): {lst}"
                      + (" ..." if len(ready) > 10 else "")
                      + ". After posting, add views with `python -m app metrics add --post N --views ...`.")
     awaiting = conn.execute("SELECT id FROM posts WHERE status='awaiting_user' ORDER BY id").fetchall()
@@ -69,7 +69,7 @@ def action_items(settings, conn: sqlite3.Connection) -> list[str]:
                      f"finish and post them (posts {', '.join('#' + str(r['id']) for r in awaiting[:10])}).")
     direct_waiting = [r["id"] for r in conn.execute(
         "SELECT id FROM posts WHERE status='scheduled' AND mode='direct' ORDER BY id").fetchall()
-        if db.get_state(conn, f"approved:{r['id']}") != "1"]
+        if (db.get_state(conn, f"approved:{r['id']}") or "0") in ("0", "false", "")]
     if direct_waiting:
         items.append("Direct-post videos need approval before they go out: "
                      + ", ".join(f"`python -m app approve {i}`" for i in direct_waiting[:10]))

@@ -207,7 +207,7 @@ def cmd_demo(settings, args) -> int:
             print(f"(publisher not available: {e})")
     print()
     print(summary.daily_summary(demo_settings, conn))
-    print(f"Outputs: {root / 'rendered'}, {root / 'published'}; database {demo_settings.path('database')}")
+    print(f"Outputs: {root / 'rendered'}, {root / 'queue' / 'ready'}; database {demo_settings.path('database')}")
     print(f"Dashboard: python -m app --root \"{root}\" dashboard")
     return 0
 
@@ -287,8 +287,11 @@ def cmd_approve(settings, args) -> int:
     if not row:
         print(f"No post #{args.post_id}")
         return 1
-    db.set_state(conn, f"approved:{args.post_id}", "1")
-    print(f"Approved post #{args.post_id} ({row['mode']}, {row['status']}).")
+    value = db.dumps({"privacy_level": args.privacy}) if args.privacy else "1"
+    db.set_state(conn, f"approved:{args.post_id}", value)
+    print(f"Approved post #{args.post_id} ({row['mode']}, {row['status']})"
+          + (f" with privacy {args.privacy}." if args.privacy else
+             " (privacy from [publish] privacy_level)."))
     return 0
 
 
@@ -366,6 +369,7 @@ def build_parser() -> argparse.ArgumentParser:
     sm.add_argument("--notify", action="store_true", help="also send a notification")
     a = sub.add_parser("approve")
     a.add_argument("post_id", type=int)
+    a.add_argument("--privacy", help="TikTok privacy level for this post, e.g. SELF_ONLY, PUBLIC_TO_EVERYONE")
     r = sub.add_parser("retry")
     r.add_argument("job_id", type=int)
     sub.add_parser("auth")
