@@ -13,6 +13,19 @@ inbox/<game>/*.mp4 ─► ingest ─► find best moments ─► hooks + caption
 You record. It does the editing, writing, queueing and bookkeeping. You spend
 0-10 minutes a day on what only a person can do.
 
+## Easiest setup (Windows)
+
+1. On GitHub: **Code -> Download ZIP**, and extract it (e.g. to `Documents\roblox-auto-repo`).
+2. Double-click **`setup.bat`**. It installs Python and FFmpeg if missing, installs the
+   packages, runs the demo, asks for your game details and (optionally) your
+   Google Drive / OneDrive folder, and turns on auto-start.
+3. Record gameplay (phone screen recording works) and upload it to the game's
+   folder in that synced folder. Finished videos + captions appear in `queue\ready\`.
+
+Phone recordings: Roblox's event logger output cannot leave a live game on a
+phone, so clips are picked from motion, audio and scene changes instead. That
+works without any event file.
+
 ## What is automated and what is not
 
 | Step | Automated? | Notes |
