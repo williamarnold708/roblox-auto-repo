@@ -403,13 +403,29 @@ def build_parser() -> argparse.ArgumentParser:
         m.add_argument("--" + f.replace("_", "-"), dest=f,
                        type=float if f in ("avg_watch_s", "completion_rate") else int)
     sub.add_parser("dashboard")
+    st = sub.add_parser("setup", help="one-time setup (packages, demo, game.json, inbox, auto-start)")
+    st.add_argument("--skip-demo", action="store_true")
+    st.add_argument("--skip-autostart", action="store_true")
+    au = sub.add_parser("autostart", help="start the service at logon")
+    au.add_argument("state", choices=["on", "off"])
     return p
+
+
+def cmd_setup(settings, args) -> int:
+    from . import setup_win
+    return setup_win.run(settings, args)
+
+
+def cmd_autostart(settings, args) -> int:
+    from . import setup_win
+    setup_win.autostart(settings, args.state == "on")
+    return 0
 
 
 COMMANDS = {"run": cmd_run, "service": cmd_service, "demo": cmd_demo, "pause": cmd_flag, "resume": cmd_flag,
             "kill": cmd_flag, "unkill": cmd_flag, "status": cmd_status, "summary": cmd_summary,
             "approve": cmd_approve, "posted": cmd_posted, "retry": cmd_retry, "auth": cmd_auth, "metrics": cmd_metrics,
-            "dashboard": cmd_dashboard}
+            "dashboard": cmd_dashboard, "setup": cmd_setup, "autostart": cmd_autostart}
 
 
 def main(argv: list[str] | None = None) -> int:

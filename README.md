@@ -16,16 +16,19 @@ You record. It does the editing, writing, queueing and bookkeeping. You spend
 ## Easiest setup (Windows)
 
 1. On GitHub: **Code -> Download ZIP**, and extract it (e.g. to `Documents\roblox-auto-repo`).
-2. Open the extracted folder, click the address bar, type `powershell` and press Enter. Then run:
+2. Install Python and FFmpeg: open **PowerShell** (Start menu) and run
    ```powershell
-   Set-ExecutionPolicy -Scope CurrentUser RemoteSigned   # once; allows local scripts
-   Get-ChildItem -Recurse *.ps1 | Unblock-File           # trust the scripts you downloaded
-   .\scripts\setup.ps1
+   winget install Python.Python.3.12 Gyan.FFmpeg
    ```
-   It installs Python and FFmpeg if missing, installs the packages, runs the
-   demo, asks for your game details and (optionally) your Google Drive /
-   OneDrive folder, and turns on auto-start.
-3. Record gameplay (phone screen recording works) and upload it to the game's
+   Then close PowerShell.
+3. Open the extracted folder, click the address bar, type `powershell` and press Enter, then run:
+   ```powershell
+   python -m app setup
+   ```
+   It installs the packages, runs the demo, asks for your game details and
+   (optionally) your Google Drive / OneDrive folder, and turns on auto-start.
+   There are no .bat/.ps1 files to run - everything is plain Python.
+4. Record gameplay (phone screen recording works) and upload it to the game's
    folder in that synced folder. Finished videos + captions appear in `queue\ready\`.
 
 Phone recordings: Roblox's event logger output cannot leave a live game on a
@@ -74,7 +77,7 @@ works without any event file.
    ```powershell
    python -m app run          # one pass, prints what it did
    python -m app status
-   .\scripts\install_windows_task.ps1 -StartNow
+   python -m app autostart on
    ```
 
 ## Demo mode
@@ -167,18 +170,18 @@ If nothing is listed, there is nothing to do.
 | `python -m app metrics fetch` | Pull metrics from the TikTok API (modes B/C) |
 | `python -m app dashboard` | Streamlit dashboard in your browser |
 
-Double-clicking `scripts\run_service.bat` runs the service in a console window.
+`python -m app service` runs the service in a console window (useful for seeing errors).
 
-### Running automatically (Task Scheduler)
+### Running automatically
 
 ```powershell
-.\scripts\install_windows_task.ps1 [-SummaryTime 21:00] [-StartNow]
-.\scripts\uninstall_windows_task.ps1
+python -m app autostart on    # start the service every time you log in (no admin)
+python -m app autostart off
 ```
 
-Registers, for your user only (no admin): **RobloxAutoPromo Service** (at logon,
-`pythonw -m app service`, no window, restarted by a 15-minute watchdog trigger
-if it stops, never two copies) and **RobloxAutoPromo Daily Summary**.
+This puts a tiny `RobloxAutoPromo.pyw` launcher in your Startup folder
+(`shell:startup`), which starts `pythonw -m app service` with no window. The
+service writes the daily summary itself at `[ops] summary_time` (default 21:00).
 
 ## Settings
 
@@ -269,8 +272,8 @@ and set its API key yourself.
 | Recording shows **review** | No good 10-30 s moment was found (idle, menus, black screen). Record livelier footage or add EventLogger marks. |
 | Recording shows **failed** | See `logs/autopromo.log`; fix the cause, then `python -m app retry <job id>` (ids in `status`). |
 | Publishing paused | Read the reason in `status`. Auth: `python -m app auth` then `resume`. Rate limit: wait, then `resume`. |
-| No Windows notifications | Check Focus Assist / notification settings. Optional nicer toasts: `Install-Module BurntToast -Scope CurrentUser`. Everything is also in `logs/NOTIFICATIONS.md`. |
-| Service not running | `Get-ScheduledTask "RobloxAutoPromo*"`; re-run the install script; or run `scripts\run_service.bat` to see errors. |
+| Where are notifications? | In `logs/NOTIFICATIONS.md` and the dashboard (no pop-ups). |
+| Service not running | Check `shell:startup` contains `RobloxAutoPromo.pyw` (`python -m app autostart on`); run `python -m app service` to see errors. |
 | "Another service instance looks alive" | One is already running. If you're sure it isn't, wait 3 minutes or use `service --force`. |
 | Dashboard won't open | `pip install -r requirements.txt`, then `python -m app dashboard` (opens http://localhost:8501). |
 | Captions are generic | Install Ollama (see Quickstart) and fill in `game.json`. |
