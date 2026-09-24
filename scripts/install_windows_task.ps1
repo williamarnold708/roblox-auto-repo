@@ -10,8 +10,8 @@
     "RobloxAutoPromo Daily Summary"  - every day at -SummaryTime, runs `python -m app summary --notify`.
 
 .EXAMPLE
-  powershell -ExecutionPolicy Bypass -File scripts\install_windows_task.ps1
-  powershell -ExecutionPolicy Bypass -File scripts\install_windows_task.ps1 -SummaryTime 21:30 -StartNow
+  .\scripts\install_windows_task.ps1
+  .\scripts\install_windows_task.ps1 -SummaryTime 21:30 -StartNow
 #>
 [CmdletBinding()]
 param(
@@ -80,4 +80,4 @@ if ($StartNow) {
 Write-Host ""
 Write-Host "Check:    python -m app status"
 Write-Host "Logs:     $ProjectDir\logs\autopromo.log"
-Write-Host "Remove:   powershell -ExecutionPolicy Bypass -File scripts\uninstall_windows_task.ps1"
+Write-Host "Remove:   .\scripts\uninstall_windows_task.ps1"

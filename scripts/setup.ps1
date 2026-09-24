@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-  One-time setup for RobloxAutoPromo on Windows. Run it by double-clicking setup.bat.
+  One-time setup for RobloxAutoPromo on Windows. Run from PowerShell in the project folder: .\scripts\setup.ps1
 
 .DESCRIPTION
   1. Installs Python 3.12 and FFmpeg with winget if they are missing.
@@ -67,7 +67,7 @@ if (-not $python) {
     Write-Host "Installing Python 3.12..."
     Winget-Install "Python.Python.3.12"
     $python = Find-Python
-    if (-not $python) { throw "Python installed but not found. Close this window and run setup.bat again." }
+    if (-not $python) { throw "Python installed but not found. Close this window and run .\scripts\setup.ps1 again." }
 }
 Write-Host "Python : $python"
 
@@ -75,7 +75,7 @@ if (-not (Get-Command ffmpeg.exe -ErrorAction SilentlyContinue)) {
     Write-Host "Installing FFmpeg..."
     Winget-Install "Gyan.FFmpeg"
     if (-not (Get-Command ffmpeg.exe -ErrorAction SilentlyContinue)) {
-        throw "FFmpeg installed but not on PATH yet. Close this window and run setup.bat again."
+        throw "FFmpeg installed but not on PATH yet. Close this window and run .\scripts\setup.ps1 again."
     }
 }
 Write-Host "FFmpeg : $((Get-Command ffmpeg.exe).Source)"

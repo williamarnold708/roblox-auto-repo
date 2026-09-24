@@ -55,7 +55,7 @@ def _toast(title: str, message: str) -> bool:
     try:
         flags = getattr(subprocess, "CREATE_NO_WINDOW", 0)
         subprocess.run(
-            ["powershell", "-NoProfile", "-NonInteractive", "-ExecutionPolicy", "Bypass",
+            ["powershell", "-NoProfile", "-NonInteractive",
              "-Command", _toast_script(title, message)],
             timeout=20, capture_output=True, creationflags=flags, check=False)
         return True

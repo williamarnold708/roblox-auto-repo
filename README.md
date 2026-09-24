@@ -16,9 +16,15 @@ You record. It does the editing, writing, queueing and bookkeeping. You spend
 ## Easiest setup (Windows)
 
 1. On GitHub: **Code -> Download ZIP**, and extract it (e.g. to `Documents\roblox-auto-repo`).
-2. Double-click **`setup.bat`**. It installs Python and FFmpeg if missing, installs the
-   packages, runs the demo, asks for your game details and (optionally) your
-   Google Drive / OneDrive folder, and turns on auto-start.
+2. Open the extracted folder, click the address bar, type `powershell` and press Enter. Then run:
+   ```powershell
+   Set-ExecutionPolicy -Scope CurrentUser RemoteSigned   # once; allows local scripts
+   Get-ChildItem -Recurse *.ps1 | Unblock-File           # trust the scripts you downloaded
+   .\scripts\setup.ps1
+   ```
+   It installs Python and FFmpeg if missing, installs the packages, runs the
+   demo, asks for your game details and (optionally) your Google Drive /
+   OneDrive folder, and turns on auto-start.
 3. Record gameplay (phone screen recording works) and upload it to the game's
    folder in that synced folder. Finished videos + captions appear in `queue\ready\`.
 
@@ -68,7 +74,7 @@ works without any event file.
    ```powershell
    python -m app run          # one pass, prints what it did
    python -m app status
-   powershell -ExecutionPolicy Bypass -File scripts\install_windows_task.ps1 -StartNow
+   .\scripts\install_windows_task.ps1 -StartNow
    ```
 
 ## Demo mode
@@ -166,8 +172,8 @@ Double-clicking `scripts\run_service.bat` runs the service in a console window.
 ### Running automatically (Task Scheduler)
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File scripts\install_windows_task.ps1 [-SummaryTime 21:00] [-StartNow]
-powershell -ExecutionPolicy Bypass -File scripts\uninstall_windows_task.ps1
+.\scripts\install_windows_task.ps1 [-SummaryTime 21:00] [-StartNow]
+.\scripts\uninstall_windows_task.ps1
 ```
 
 Registers, for your user only (no admin): **RobloxAutoPromo Service** (at logon,
