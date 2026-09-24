@@ -4,3 +4,12 @@ analytics/*.db*
 analytics/.tokens.json
 .env
 logs/*.log
+.pytest_cache/
+clips/*
+rendered/*
+processing/*
+queue/*
+published/*
+inbox/*
+!*/.gitkeep
+KILL

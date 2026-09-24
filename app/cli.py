@@ -187,6 +187,7 @@ def cmd_demo(settings, args) -> int:
         root = Path(args.root_dir or tempfile.mkdtemp(prefix="autopromo-demo-"))
     demo_settings = config.load(root)
     demo_settings.raw.setdefault("publish", {})["mode"] = "local"  # never touch TikTok in demo
+    demo_settings.raw.setdefault("ingest", {})["settle_seconds"] = 0  # sample is fully written already
     print(f"Demo root: {root}")
     script = config.ROOT / "scripts" / "make_sample.py"
     r = subprocess.run([sys.executable, str(script), "--out-root", str(root)], cwd=str(config.ROOT))
