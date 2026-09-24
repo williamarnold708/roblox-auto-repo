@@ -1,0 +1,147 @@
+{
+  "version": 1,
+  "_doc": "Hook/caption templates for TemplateProvider. Keys are trigger kinds (Roblox event kinds or clip-detector reasons). Placeholders: {game} {genre} {detail} {cta}. A template may only mention an event its key proves happened (guardrails re-check this). No engagement bait, no emoji in hooks/on_screen (DejaVu font).",
+  "priority": ["boss_defeat", "victory", "rare_item", "high_score", "death", "unexpected", "checkpoint", "loud_audio", "motion_peak", "scene_changes", "generic"],
+  "hooks": {
+    "boss_defeat": [
+      "The boss fight in {game} gets intense",
+      "How this boss went down in {game}",
+      "This {game} boss did not last long",
+      "Boss down. {game} does not play around",
+      "Watch the final hit on this boss"
+    ],
+    "victory": [
+      "Made it to the end in {game}",
+      "That finish in {game} was close",
+      "The moment it all paid off",
+      "This is how you finish {game}",
+      "Clean finish in {game}"
+    ],
+    "rare_item": [
+      "Did not expect this drop in {game}",
+      "Look what showed up in {game}",
+      "A rare find in {game}",
+      "This item in {game} is hard to get",
+      "Lucky pull in {game}"
+    ],
+    "high_score": [
+      "New high score in {game}",
+      "The score kept climbing in {game}",
+      "Personal best in {game}",
+      "Watch the score jump in {game}",
+      "How far can you push the score in {game}?"
+    ],
+    "death": [
+      "So close in {game}",
+      "{game} did not forgive that mistake",
+      "That was one jump too far",
+      "This part of {game} is brutal",
+      "One tiny mistake in {game}",
+      "Would you have made that?"
+    ],
+    "unexpected": [
+      "Nobody expected that in {game}",
+      "Wait, what just happened in {game}?",
+      "{game} surprised me here",
+      "That was not supposed to happen",
+      "This moment in {game} came out of nowhere"
+    ],
+    "checkpoint": [
+      "Checkpoint reached in {game}",
+      "Another checkpoint in {game}",
+      "Getting further in {game}",
+      "Progress in {game} feels good",
+      "One more checkpoint down"
+    ],
+    "loud_audio": [
+      "Turn the sound up for this one",
+      "It gets loud in {game}",
+      "Listen to this moment in {game}",
+      "This part of {game} goes off",
+      "Sound on for {game}"
+    ],
+    "motion_peak": [
+      "Things get fast in {game}",
+      "Can you keep up with {game}?",
+      "The pace in {game} is wild",
+      "Blink and you miss it",
+      "{game} does not slow down"
+    ],
+    "scene_changes": [
+      "So much happens in a few seconds of {game}",
+      "Every second of {game} looks different",
+      "{game} keeps switching it up",
+      "A quick tour of {game}",
+      "Look how much {game} packs in"
+    ],
+    "generic": [
+      "Have you tried {game} on Roblox?",
+      "A few seconds of {game}",
+      "This is {game}",
+      "What {game} looks like right now",
+      "Would you play {game}?"
+    ]
+  },
+  "genre_hooks": {
+    "obby": ["Could you clear this obby?", "This obby in {game} tests your timing"],
+    "horror": ["{game} gets creepy fast", "Do not play {game} alone"],
+    "tycoon": ["Watch this {game} base grow", "Building up in {game}"],
+    "simulator": ["The grind in {game} hits different", "Leveling up in {game}"],
+    "rpg": ["Adventuring through {game}", "The world of {game}"],
+    "shooter": ["Aim check in {game}", "Tight fights in {game}"],
+    "racing": ["Full speed in {game}", "Every corner counts in {game}"],
+    "survival": ["Can you survive {game}?", "Staying alive in {game}"]
+  },
+  "on_screen": {
+    "boss_defeat": ["BOSS DOWN", "FINAL HIT"],
+    "victory": ["MADE IT", "CLEAN FINISH"],
+    "rare_item": ["RARE FIND", "LUCKY DROP"],
+    "high_score": ["NEW HIGH SCORE", "SCORE UP"],
+    "death": ["SO CLOSE", "ONE MISTAKE"],
+    "unexpected": ["WAIT WHAT", "DID NOT SEE THAT"],
+    "checkpoint": ["CHECKPOINT", "KEEP GOING"],
+    "loud_audio": ["SOUND ON", "LISTEN"],
+    "motion_peak": ["KEEP UP", "FAST"],
+    "scene_changes": ["SO MUCH GOING ON", "QUICK LOOK"],
+    "generic": ["{game}", "PLAY {game}"]
+  },
+  "captions": {
+    "boss_defeat": ["Taking down a boss in {game}. {cta}", "{game} boss fight. {cta}"],
+    "victory": ["Made it to the end of {game}. {cta}", "Finishing {game}. {cta}"],
+    "rare_item": ["A rare find in {game}. {cta}", "Lucky drop in {game}. {cta}"],
+    "high_score": ["New high score in {game}. {cta}", "Pushing the score in {game}. {cta}"],
+    "death": ["So close in {game}. Think you can do better? {cta}", "{game} is harder than it looks. {cta}"],
+    "unexpected": ["Did not see that coming in {game}. {cta}", "{game} had a surprise. {cta}"],
+    "checkpoint": ["Making progress in {game}. {cta}", "Checkpoint by checkpoint in {game}. {cta}"],
+    "loud_audio": ["Sound on for {game}. {cta}", "{game} with the sound up. {cta}"],
+    "motion_peak": ["Fast moments in {game}. {cta}", "{game} does not slow down. {cta}"],
+    "scene_changes": ["A quick look at {game}. {cta}", "So much going on in {game}. {cta}"],
+    "generic": ["Playing {game} on Roblox. {cta}", "{game} on Roblox. {cta}"]
+  },
+  "voiceover": {
+    "boss_defeat": ["This is the boss fight in {game}. Play it yourself on Roblox."],
+    "victory": ["Here is how this run of {game} ended. Try it yourself on Roblox."],
+    "rare_item": ["Look at what turned up in {game}. It is free to play on Roblox."],
+    "high_score": ["This run of {game} set a new high score. Can you beat it on Roblox?"],
+    "death": ["This part of {game} is tougher than it looks. Give it a try on Roblox."],
+    "unexpected": ["This did not go to plan in {game}. See what happens for yourself on Roblox."],
+    "checkpoint": ["Progress in {game} comes one checkpoint at a time. Play it on Roblox."],
+    "loud_audio": ["{game} gets loud here. Play it on Roblox."],
+    "motion_peak": ["{game} moves fast. Try to keep up on Roblox."],
+    "scene_changes": ["Here is a quick look at {game}. Play it free on Roblox."],
+    "generic": ["This is {game}, a {genre} game on Roblox. Give it a try."]
+  },
+  "rationale": {
+    "boss_defeat": "boss defeat logged by the in-game event logger - clear payoff moment",
+    "victory": "victory/finish logged by the event logger - satisfying resolution",
+    "rare_item": "rare item event logged - novelty and reward",
+    "high_score": "leaderstats high score change logged - visible progress",
+    "death": "player death logged - tension and near-miss drama",
+    "unexpected": "developer-marked unexpected moment - surprise",
+    "checkpoint": "checkpoint logged - sense of progress",
+    "loud_audio": "audio loudness spike detected - energy in the clip",
+    "motion_peak": "high on-screen motion detected - fast action",
+    "scene_changes": "several scene changes detected - visual variety",
+    "generic": "no strong trigger - relies on game identity"
+  }
+}

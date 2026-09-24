@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+analytics/*.db*
+analytics/.tokens.json
+.env
+logs/*.log
