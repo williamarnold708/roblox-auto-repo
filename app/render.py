@@ -161,8 +161,29 @@ def pick_hook(content_row) -> str:
 
 
 def _esc(value: str) -> str:
-    """Escape a value for use inside a filtergraph option (paths only)."""
-    return value.replace("\\", "\\\\").replace(":", "\\:").replace("'", "\\'").replace(",", "\\,")
+    """Escape a file path for a filter option inside -filter_complex.
+
+    Two parsing levels apply (graph, then option), so ':' and "'" need a
+    doubled backslash. Backslashes become '/' (Windows accepts both), which also
+    keeps 'C:\\Users' from turning into escape sequences."""
+    return (value.replace("\\", "/").replace(":", "\\\\:").replace(",", "\\,")
+            .replace("'", "\\\\\\'").replace(" ", "\\ "))
+
+
+FONT_CANDIDATES = (
+    "C:/Windows/Fonts/arialbd.ttf", "C:/Windows/Fonts/segoeuib.ttf", "C:/Windows/Fonts/arial.ttf",
+    "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
+    "/System/Library/Fonts/Supplemental/Arial Bold.ttf", "/Library/Fonts/Arial Bold.ttf",
+)
+
+
+def resolve_font(configured: str | None) -> str:
+    """The configured font if it exists, else the first bold font found on this OS."""
+    for f in ([configured] if configured else []) + list(FONT_CANDIDATES):
+        if f and Path(f).is_file():
+            return f
+    raise RenderError("no usable font found; set [render] font in config/settings.toml "
+                      "to a .ttf file on this computer")
 
 
 def _video_graph(layout: str, W: int, H: int, fps: int) -> str:
@@ -181,7 +202,7 @@ def _video_graph(layout: str, W: int, H: int, fps: int) -> str:
 def build_command(src: Path, out: Path, info: dict, lines: list[dict], txt_dir: Path, settings) -> list[str]:
     r = settings.section("render")
     W, H, fps = int(r.get("width", 1080)), int(r.get("height", 1920)), int(r.get("fps", 30))
-    font = str(r.get("font", "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"))
+    font = resolve_font(r.get("font"))
     D = info["duration"]
     graph = _video_graph(str(r.get("layout", "blur_fill")), W, H, fps)
     chain = "[base]"

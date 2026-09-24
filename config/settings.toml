@@ -25,7 +25,7 @@ fps = 30
 crf = 20
 preset = "veryfast"
 layout = "blur_fill"      # blur_fill | center_crop
-font = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
+font = ""                 # empty = auto-detect (Arial Bold on Windows, DejaVu on Linux)
 
 [content]
 provider = "auto"         # auto | ollama | template

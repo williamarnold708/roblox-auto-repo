@@ -211,6 +211,13 @@ def cmd_demo(settings, args) -> int:
     print(summary.daily_summary(demo_settings, conn))
     print(f"Outputs: {root / 'rendered'}, {root / 'queue' / 'ready'}; database {demo_settings.path('database')}")
     print(f"Dashboard: python -m app --root \"{root}\" dashboard")
+    rendered = conn.execute("SELECT COUNT(*) FROM renders").fetchone()[0]
+    if not rendered:
+        print("\nDEMO FAILED: no videos were produced. Errors:")
+        for j in conn.execute("SELECT kind, last_error FROM jobs WHERE last_error IS NOT NULL"):
+            print(f"  [{j['kind']}] {j['last_error']}")
+        print(f"Full log: {demo_settings.path('logs') / 'autopromo.log'}")
+        return 1
     return 0
 
 

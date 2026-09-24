@@ -81,6 +81,11 @@ def action_items(settings, conn: sqlite3.Connection) -> list[str]:
     if failed_jobs:
         items.append(f"{failed_jobs} processing job(s) gave up after retries - see `python -m app status` "
                      f"and logs/autopromo.log.")
+    retrying = conn.execute("SELECT kind, ref_id, attempts, last_error FROM jobs "
+                            "WHERE status='pending' AND attempts > 0 ORDER BY id LIMIT 5").fetchall()
+    for j in retrying:
+        items.append(f"{j['kind']} job for #{j['ref_id']} failed {j['attempts']}x and will retry: "
+                     f"{(j['last_error'] or '')[:200]}")
     return items
 
 
