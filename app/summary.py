@@ -59,10 +59,11 @@ def action_items(settings, conn: sqlite3.Connection) -> list[str]:
         SELECT p.id, r.path FROM posts p JOIN renders r ON r.id=p.render_id
         WHERE p.status='ready_manual' ORDER BY p.scheduled_for, p.id""").fetchall()
     if ready:
-        lst = ", ".join(f"#{r['id']} ({Path(r['path'] or '').name})" for r in ready[:10])
+        lst = ", ".join(f"#{r['id']}" for r in ready[:10])
         items.append(f"{len(ready)} video(s) ready to post manually from `queue/ready/` (MP4 + caption .txt): {lst}"
                      + (" ..." if len(ready) > 10 else "")
-                     + ". After posting, add views with `python -m app metrics add --post N --views ...`.")
+                     + ". After posting each one, run `python -m app posted N --url <tiktok link>`, "
+                     "later add views with `python -m app metrics add --post N --views ...`.")
     awaiting = conn.execute("SELECT id FROM posts WHERE status='awaiting_user' ORDER BY id").fetchall()
     if awaiting:
         items.append(f"{len(awaiting)} draft(s) waiting in your TikTok inbox - open TikTok, "

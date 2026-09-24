@@ -113,7 +113,8 @@ def main() -> None:
 
     # ---- headline counts
     created = one("SELECT COUNT(*) FROM renders")
-    queued = one("SELECT COUNT(*) FROM renders WHERE status='queued'")
+    queued = one("SELECT COUNT(*) FROM renders WHERE status='queued' "
+                 "AND id NOT IN (SELECT render_id FROM posts WHERE render_id IS NOT NULL)")
     published = one("SELECT COUNT(*) FROM posts WHERE status='published'")
     manual = one("SELECT COUNT(*) FROM posts WHERE status IN ('ready_manual','awaiting_user')")
     failures = (one("SELECT COUNT(*) FROM renders WHERE status='qc_failed'")

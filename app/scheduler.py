@@ -250,7 +250,9 @@ def publish_due(settings, conn: sqlite3.Connection, now: datetime | None = None)
             status = "error"
         results.append((r["id"], status))
     # follow up on uploads still being processed by TikTok
-    for r in conn.execute("SELECT id FROM posts WHERE status='uploading'").fetchall():
+    stale = _iso(now - timedelta(minutes=30))  # don't hammer the API for drafts sitting in the inbox
+    for r in conn.execute("SELECT id FROM posts WHERE publish_id IS NOT NULL AND (status='uploading' OR "
+                          "(status='awaiting_user' AND COALESCE(updated_at,'') < ?))", (stale,)).fetchall():
         if publishing_block_reason(settings, conn):
             break
         try:

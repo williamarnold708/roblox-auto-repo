@@ -379,6 +379,10 @@ def test_cli_pause_kill_approve(env, monkeypatch):
     assert cli.main(["--root", root, "approve", str(pid)]) == 0
     assert db.get_state(conn, f"approved:{pid}") == "1"
     assert cli.main(["--root", root, "status"]) == 0
+    rm = _post(conn, _queued_render(conn, _game(conn, "b")), "ready_manual")
+    assert cli.main(["--root", root, "posted", str(rm), "--url", "https://tiktok.com/x"]) == 0
+    assert conn.execute("SELECT status FROM posts WHERE id=?", (rm,)).fetchone()[0] == "published"
+    assert cli.main(["--root", root, "posted", str(pid)]) == 1  # scheduled posts can't be confirmed
 
 
 def test_cli_run_halts_on_kill_file(env, monkeypatch):

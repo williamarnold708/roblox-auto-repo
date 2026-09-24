@@ -7,7 +7,8 @@
   summary             print/write today's summary (--day YYYY-MM-DD, --notify)
   pause | resume      stop / restart publishing (processing continues)
   kill | unkill       global kill switch: stops ALL processing and publishing
-  approve POST_ID     approve a post for direct publishing
+  approve POST_ID     approve a post for direct publishing (--privacy LEVEL)
+  posted POST_ID      confirm you posted a ready_manual / inbox video yourself (--url LINK)
   retry JOB_ID        re-queue a job that gave up
   auth                connect your TikTok account
   metrics add|fetch   record real metrics (manual) or pull them from the API
@@ -295,6 +296,24 @@ def cmd_approve(settings, args) -> int:
     return 0
 
 
+def cmd_posted(settings, args) -> int:
+    """User confirms they posted a local/ready_manual video themselves."""
+    conn = open_db(settings)
+    row = conn.execute("SELECT id, status FROM posts WHERE id=?", (args.post_id,)).fetchone()
+    if not row:
+        print(f"No post #{args.post_id}")
+        return 1
+    if row["status"] not in ("ready_manual", "awaiting_user"):
+        print(f"Post #{args.post_id} is '{row['status']}'; only ready_manual/awaiting_user posts can be "
+              f"confirmed by hand.")
+        return 1
+    conn.execute("UPDATE posts SET status='published', share_url=COALESCE(?, share_url), updated_at=? WHERE id=?",
+                 (args.url, db.now(), args.post_id))
+    conn.commit()
+    print(f"Post #{args.post_id} marked published (confirmed by you).")
+    return 0
+
+
 def cmd_retry(settings, args) -> int:
     conn = open_db(settings)
     job = conn.execute("SELECT kind, ref_id FROM jobs WHERE id=?", (args.job_id,)).fetchone()
@@ -370,6 +389,9 @@ def build_parser() -> argparse.ArgumentParser:
     a = sub.add_parser("approve")
     a.add_argument("post_id", type=int)
     a.add_argument("--privacy", help="TikTok privacy level for this post, e.g. SELF_ONLY, PUBLIC_TO_EVERYONE")
+    pp = sub.add_parser("posted", help="confirm you posted a ready_manual/inbox video yourself")
+    pp.add_argument("post_id", type=int)
+    pp.add_argument("--url", help="TikTok link of the post")
     r = sub.add_parser("retry")
     r.add_argument("job_id", type=int)
     sub.add_parser("auth")
@@ -385,7 +407,7 @@ def build_parser() -> argparse.ArgumentParser:
 
 COMMANDS = {"run": cmd_run, "service": cmd_service, "demo": cmd_demo, "pause": cmd_flag, "resume": cmd_flag,
             "kill": cmd_flag, "unkill": cmd_flag, "status": cmd_status, "summary": cmd_summary,
-            "approve": cmd_approve, "retry": cmd_retry, "auth": cmd_auth, "metrics": cmd_metrics,
+            "approve": cmd_approve, "posted": cmd_posted, "retry": cmd_retry, "auth": cmd_auth, "metrics": cmd_metrics,
             "dashboard": cmd_dashboard}
 
 
