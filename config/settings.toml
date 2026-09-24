@@ -1,0 +1,43 @@
+# RobloxAutoPromo settings. Paths are relative to the project root.
+[paths]
+inbox = "inbox"
+processing = "processing"
+clips = "clips"
+rendered = "rendered"
+queue = "queue"
+published = "published"
+analytics = "analytics"
+logs = "logs"
+database = "analytics/autopromo.db"
+
+[clipping]
+min_seconds = 10
+max_seconds = 30
+target_seconds = 20
+max_clips_per_recording = 5
+min_score = 0.25          # below this a candidate is discarded
+black_threshold = 0.10    # max fraction of black frames allowed in a clip
+
+[render]
+width = 1080
+height = 1920
+fps = 30
+crf = 20
+preset = "veryfast"
+layout = "blur_fill"      # blur_fill | center_crop
+font = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
+
+[content]
+provider = "auto"         # auto | ollama | template
+ollama_url = "http://localhost:11434"
+ollama_model = "llama3.2:3b"
+hooks_per_clip = 4
+max_hashtags = 5
+
+[schedule]
+max_posts_per_day = 2
+slots = ["12:30", "18:30", "20:30"]   # local time
+timezone = "Europe/London"
+
+[publish]
+mode = "local"            # local | inbox | direct
